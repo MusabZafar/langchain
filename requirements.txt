@@ -5,3 +5,8 @@ langchain-groq
 python-dotenv
 langchain-google-genai
 langchain-google-genai
+langchain_tavily
+langgraph-cli[inmem]
+langchain-mcp-adapters
+mcp
+langgraph

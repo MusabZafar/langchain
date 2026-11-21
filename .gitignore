@@ -5,8 +5,22 @@ build/
 dist/
 wheels/
 *.egg-info
+
+# uv & Virtual environments
+.venv/
 uv.lock
 
-# Virtual environments
-.venv
+# Environment variables & secrets
 .env
+.env.*
+
+# LangGraph local runtime cache
+.langgraph_api/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Editor / OS files
+.vscode/
+.DS_Store
+Thumbs.db
