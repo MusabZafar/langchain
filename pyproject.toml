@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "groq>=1.7.0",
     "ipykernel>=7.4.0",
     "langchain>=1.5.2",
     "langchain-community>=0.4.2",
@@ -20,6 +21,7 @@ dependencies = [
     "langgraph-cli[inmem]>=0.1.55",
     "langsmith>=0.16.0",
     "mcp>=1.30.0",
+    "openai>=3.57.0",
     "python-dotenv>=1.2.4",
 ]
 
