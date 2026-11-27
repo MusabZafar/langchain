@@ -13,3 +13,5 @@ langgraph
 langsmith
 openai
 groq
+arxiv
+wikipedia
