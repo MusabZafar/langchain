@@ -28,16 +28,22 @@ if radio_opt.index(selected_opt) == 1:
 else:
     db_uri = LOCALDB
 
-api_key = st.sidebar.text_input(label="GRoq API Key", type="password")
+api_key = st.sidebar.text_input(label="Groq API Key", type="password")
 
 if not db_uri:
     st.info("Please enter the database information and uri")
 
 if not api_key:
-    st.info("Please add the groq api key")
+    st.info("Please add the Groq API key")
+    st.stop()
 
-## LLM model
-llm = ChatGroq(groq_api_key=api_key, model_name="Llama3-8b-8192", streaming=True)
+## LLM model (Updated to Groq's flagship production reasoning model)
+llm = ChatGroq(
+    groq_api_key=api_key,
+    model_name="openai/gpt-oss-120b",
+    temperature=0,
+    streaming=True
+)
 
 @st.cache_resource(ttl="2h")
 def configure_db(db_uri, mysql_host=None, mysql_user=None, mysql_password=None, mysql_db=None):
@@ -58,3 +64,29 @@ else:
     db = configure_db(db_uri)
 
 ## toolkit
+toolkit = SQLDatabaseToolkit(db=db, llm=llm)
+
+agent = create_sql_agent(
+    llm=llm,
+    toolkit=toolkit,
+    verbose=True,
+    agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION
+)
+
+if "messages" not in st.session_state or st.sidebar.button("Clear message history"):
+    st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
+
+for msg in st.session_state.messages:
+    st.chat_message(msg["role"]).write(msg["content"])
+
+user_query = st.chat_input(placeholder="Ask anything from the database")
+
+if user_query:
+    st.session_state.messages.append({"role": "user", "content": user_query})
+    st.chat_message("user").write(user_query)
+
+    with st.chat_message("assistant"):
+        streamlit_callback = StreamlitCallbackHandler(st.container())
+        response = agent.run(user_query, callbacks=[streamlit_callback])
+        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.write(response)
